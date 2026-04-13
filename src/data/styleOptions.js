@@ -1,5 +1,3 @@
-// styleOptions.js – אפשרויות עיצוב
-
 export const FONTS = [
   "Arial", "Times New Roman", "Courier New",
   "Georgia", "Verdana", "Tahoma", "Impact", "Comic Sans MS",

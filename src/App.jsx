@@ -1,4 +1,3 @@
-// App.jsx – קומפוננט ראשי – כל 4 החלקים
 import React, { useState, useRef } from "react";
 import AuthScreen    from "./components/AuthScreen";
 import DocPanel      from "./components/DocPanel";
@@ -9,7 +8,7 @@ import { useAuth }   from "./hooks/useAuth";
 import { useFiles }  from "./hooks/useFiles";
 import { DEFAULT_STYLE } from "./data/styleOptions";
 
-// ── עזרים ──────────────────────────────────────
+
 let nextId = 1;
 function makeId()    { return nextId++; }
 function newDoc(name) { return { id: makeId(), name, chars: [], dirty: false }; }

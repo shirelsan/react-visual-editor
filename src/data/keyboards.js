@@ -1,5 +1,3 @@
-// keyboards.js – הגדרות לוחות מקשים
-
 export const KEYBOARDS = {
   EN: {
     label: "EN",
@@ -34,7 +32,6 @@ export const KEYBOARDS = {
   },
 };
 
-// שורות קבועות בכל שפה
 export const DIGITS_ROW  = ["1","2","3","4","5","6","7","8","9","0"];
 export const SYMBOLS_ROW = ["!","@","#","$","%","&","*","(",")","-","=","+",",",".","?"];
 
