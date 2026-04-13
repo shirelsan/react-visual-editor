@@ -14,6 +14,8 @@ let nextId = 1;
 function makeId()    { return nextId++; }
 function newDoc() { return { id: makeId(), name: "new", chars: [], dirty: false }; }
 function makeChar(ch, style) { return { ch, style: { ...style } }; }
+
+const isSeparator = ch => ch === " " || ch === "\n";
 const MAX_UNDO = 50;
 
 // ── App ─────────────────────────────────────────
@@ -103,8 +105,8 @@ export default function App() {
     pushHistory(focusedDoc.id, focusedDoc.chars);
     updateFocused(d => {
       let arr = [...d.chars];
-      while (arr.length && arr[arr.length - 1].ch === " ") arr.pop();
-      while (arr.length && arr[arr.length - 1].ch !== " ") arr.pop();
+      while (arr.length && isSeparator(arr[arr.length - 1].ch)) arr.pop();
+      while (arr.length && !isSeparator(arr[arr.length - 1].ch)) arr.pop();
       return { chars: arr };
     });
   }
