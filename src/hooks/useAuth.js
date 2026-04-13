@@ -33,7 +33,7 @@ export function useAuth() {
     users[username] = { password, files: {} };
     saveUsers(users);
     
-    const sessionData = { username, userData: newUser };
+    const sessionData = { username, userData: users[username] };
     localStorage.setItem(LS_SESSION, JSON.stringify(sessionData));
     setCurrentUser(sessionData);
     return null;
