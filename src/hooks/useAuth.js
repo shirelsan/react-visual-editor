@@ -1,11 +1,13 @@
-// useAuth.js – ניהול משתמשים בצד לקוח (חלק ד)
-// אימות בסיסי בלבד באמצעות LocalStorage
+// Data structure in localStorage:
+// "users" : { username: { password, files: { filename: chars[] } } }
+// "current_user" : username (active session)
 
 import { useState } from "react";
 
-const LS_USERS = "rte_users"; // { username: password }
+const LS_USERS   = "all_users";
+const LS_CURRENT = "current_user";
 
-function getUsers() {
+export function getUsers() {
   try { return JSON.parse(localStorage.getItem(LS_USERS)) || {}; }
   catch { return {}; }
 }
@@ -15,33 +17,37 @@ function saveUsers(users) {
 }
 
 export function useAuth() {
-  // שמירת המשתמש הנוכחי ב-sessionStorage כך שסגירת הטאב מנתקת
   const [currentUser, setCurrentUser] = useState(
-    () => sessionStorage.getItem("rte_current_user") || null
+    () => localStorage.getItem(LS_CURRENT) || null
   );
 
   function register(username, password) {
-    if (!username || !password) return "נא למלא שם משתמש וסיסמה";
+    if (!username || !password) 
+      return "Please fill in your username and password";
+    
     const users = getUsers();
-    if (users[username]) return "שם המשתמש תפוס";
-    users[username] = password;
+    if (users[username])
+      return "Username is taken";
+    
+    users[username] = { password, files: {} };
     saveUsers(users);
-    sessionStorage.setItem("rte_current_user", username);
+    localStorage.setItem(LS_CURRENT, username);
     setCurrentUser(username);
-    return null; // אין שגיאה
+    return null;
   }
 
   function login(username, password) {
-    if (!username || !password) return "נא למלא שם משתמש וסיסמה";
+    if (!username || !password) return "Please fill in your username and password";
     const users = getUsers();
-    if (!users[username] || users[username] !== password) return "שם משתמש או סיסמה שגויים";
-    sessionStorage.setItem("rte_current_user", username);
+    if (!users[username] || users[username].password !== password)
+      return "Incorrect username or password";
+    localStorage.setItem(LS_CURRENT, username);
     setCurrentUser(username);
     return null;
   }
 
   function logout() {
-    sessionStorage.removeItem("rte_current_user");
+    localStorage.removeItem(LS_CURRENT);
     setCurrentUser(null);
   }
 

@@ -1,45 +1,68 @@
-// useFiles.js – שמירה וטעינת קבצים ב-LocalStorage (חלקים ב + ד)
-// כל קובץ שמור תחת המפתח: "rte_file_<username>_<filename>"
+// All files stored inside the user's object:
+// users -> { [username]: { password, files: { [filename]: chars[] } } }
 
-const PREFIX = "rte_file_";
+import { getUsers } from "./useAuth";
 
-function fileKey(username, filename) {
-  return PREFIX + username + "_" + filename;
+const LS_USERS = "users";
+
+function saveUsers(users) {
+  localStorage.setItem(LS_USERS, JSON.stringify(users));
 }
 
 export function useFiles(username) {
 
-  // רשימת שמות הקבצים של המשתמש הנוכחי
+  // Get the current user's files
+  function getUserFiles() {
+    const users = getUsers();
+    return users[username]?.files || {};
+  }
+
+  // List all file names for this user
   function listFiles() {
-    const prefix = PREFIX + username + "_";
-    const names = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key.startsWith(prefix)) {
-        names.push(key.slice(prefix.length));
-      }
-    }
-    return names.sort();
+    return Object.keys(getUserFiles()).sort();//למה למיין??
   }
 
-  // שמירת קובץ (save / save-as)
+  // Save a file under this user
   function saveFile(filename, chars) {
-    if (!filename) return;
-    localStorage.setItem(fileKey(username, filename), JSON.stringify(chars));
+    if (!filename || !username) return;
+    const users = getUsers();
+    if (!users[username]) return;
+    users[username].files[filename] = chars;
+    saveUsers(users);
   }
 
-  // טעינת קובץ (open)
+  // Load a file by name
   function openFile(filename) {
-    const raw = localStorage.getItem(fileKey(username, filename));
-    if (!raw) return null;
-    try { return JSON.parse(raw); }
-    catch { return null; }
+    const files = getUserFiles();
+    return files[filename] || null;
   }
 
-  // מחיקת קובץ
+  // Delete a file by name
   function deleteFile(filename) {
-    localStorage.removeItem(fileKey(username, filename));
+    if (!username) 
+      return;
+    const users = getUsers();
+    if (!users[username]?.files) 
+      return;
+    delete users[username].files[filename];
+    saveUsers(users);
   }
 
-  return { listFiles, saveFile, openFile, deleteFile };
+  // Rename a file
+  function renameFile(oldName, newName) {
+    if (!oldName || !newName || oldName === newName || !username) return false;
+    const users = getUsers();
+
+    if (!users[username]?.files) 
+      return false;
+    if (users[username].files[newName] !== undefined) 
+      return false; // name taken
+
+    users[username].files[newName] = users[username].files[oldName];
+    delete users[username].files[oldName];
+    saveUsers(users);
+    return true;
+  }
+
+  return { listFiles, saveFile, openFile, deleteFile, renameFile };
 }

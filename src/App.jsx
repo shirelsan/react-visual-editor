@@ -4,6 +4,7 @@ import DocPanel      from "./components/DocPanel";
 import EditorArea    from "./components/EditorArea";
 import FileManager   from "./components/FileManager";
 import SearchReplace from "./components/SearchReplace";
+import TextDisplay   from "./components/TextDisplay";
 import { useAuth }   from "./hooks/useAuth";
 import { useFiles }  from "./hooks/useFiles";
 import { DEFAULT_STYLE } from "./data/styleOptions";
@@ -11,7 +12,7 @@ import { DEFAULT_STYLE } from "./data/styleOptions";
 
 let nextId = 1;
 function makeId()    { return nextId++; }
-function newDoc(name) { return { id: makeId(), name, chars: [], dirty: false }; }
+function newDoc() { return { id: makeId(), name: "new", chars: [], dirty: false }; }
 function makeChar(ch, style) { return { ch, style: { ...style } }; }
 const MAX_UNDO = 50;
 
@@ -25,7 +26,7 @@ export default function App() {
   const { listFiles, saveFile, openFile, deleteFile } = useFiles(currentUser || "");
 
   // חלק ג – מסמכים פתוחים
-  const [docs,      setDocs]      = useState(() => [newDoc("טקסט 1")]);
+  const [docs,      setDocs]      = useState(() => [newDoc()]);
   const [focusedId, setFocusedId] = useState(() => docs[0].id);
 
   // חלק א – מצב עורך
@@ -56,9 +57,21 @@ export default function App() {
     if (stack.length > MAX_UNDO) stack.shift();
   }
 
-  // ── תיקון 1: יציאה מאפסת את כל המסמכים ──
+  // ── logout – save dirty docs then reset ──
   function handleLogout() {
-    const fresh = newDoc("טקסט 1");
+    const dirtyDocs = docs.filter(d => d.dirty);
+
+    if (dirtyDocs.length > 0) {
+      const names = dirtyDocs.map(d => `"${d.name}"`).join(", ");
+      const shouldSave = window.confirm(
+        `The following documents were not saved: ${names}\n Save before exit?`
+      );
+      if (shouldSave) {
+        dirtyDocs.forEach(d => saveFile(d.name, d.chars));
+      }
+    }
+
+    const fresh = newDoc();
     setDocs([fresh]);
     setFocusedId(fresh.id);
     setCurrentStyle({ ...DEFAULT_STYLE });
@@ -165,7 +178,7 @@ export default function App() {
   // ── חלק ג: ניהול מסמכים ──
 
   function handleNew() {
-    const doc = newDoc(`טקסט ${docs.length + 1}`);
+    const doc = newDoc();
     setDocs(prev => [...prev, doc]);
     setFocusedId(doc.id);
   }
@@ -178,7 +191,7 @@ export default function App() {
     setDocs(prev => {
       const next = prev.filter(d => d.id !== id);
       if (next.length === 0) {
-        const fresh = newDoc("טקסט 1");
+        const fresh = newDoc();
         setFocusedId(fresh.id);
         return [fresh];
       }
@@ -207,21 +220,31 @@ export default function App() {
         </div>
       </div>
 
-      {/* ── חלק ג: אזורי תצוגה מרובים ── */}
-      <div style={styles.docsArea}>
-        {docs.map(doc => (
-          <DocPanel
-            key={doc.id}
-            doc={doc}
-            isFocused={doc.id === focusedId}
-            onFocus={() => setFocusedId(doc.id)}
-            onClose={() => handleClose(doc.id)}
-            onSave={(filename) => handleSave(filename, doc.id)}
-          />
-        ))}
+      {/* ── אזור עליון: טאבים + תצוגת טקסט ── */}
+      <div style={styles.displayArea}>
+
+        {/* רצועת טאבים */}
+        <div style={styles.tabsRow}>
+          {docs.map(doc => (
+            <DocPanel
+              key={doc.id}
+              doc={doc}
+              isFocused={doc.id === focusedId}
+              onFocus={() => setFocusedId(doc.id)}
+              onClose={() => handleClose(doc.id)}
+              onSave={(filename) => handleSave(filename, doc.id)}
+            />
+          ))}
+        </div>
+
+        {/* תצוגת הטקסט הממוקד */}
+        <div style={styles.textDisplayWrapper}>
+          <TextDisplay chars={focusedDoc.chars} />
+        </div>
+
       </div>
 
-      {/* ── חלק א: אזור עריכה ── */}
+      {/* ── חלק א: אזור עריכה – תחתית המסך ── */}
       <EditorArea
         currentStyle={currentStyle}
         applyToAll={applyToAll}
@@ -290,16 +313,35 @@ const styles = {
     background: "#1a252f", padding: "4px 10px",
     borderRadius: 6, fontSize: 13, whiteSpace: "nowrap",
   },
-  // תיקון 2: docsArea גמיש יותר עם minHeight קטן יותר
-  docsArea: {
+
+  // אזור עליון – גמיש, תופס את כל המקום הפנוי
+  displayArea: {
     flex: 1,
     display: "flex",
-    gap: 12,
-    padding: 10,
-    maxHeight: "30vh",
+    flexDirection: "column",
+    overflow: "hidden",
+    minHeight: 0,
+  },
+
+  // רצועת טאבים
+  tabsRow: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "nowrap",
     overflowX: "auto",
-    overflowY: "hidden",
-    alignItems: "stretch",
-    minHeight: 80,
+    gap: 2,
+    padding: "8px 12px 0 12px",
+    background: "#dce6ec",
+    borderBottom: "2px solid #2eadd0",
+    flexShrink: 0,
+    alignItems: "flex-end",
+  },
+
+  // עטיפת תצוגת הטקסט
+  textDisplayWrapper: {
+    flex: 1,
+    overflow: "hidden",
+    padding: 12,
+    minHeight: 0,
   },
 };
