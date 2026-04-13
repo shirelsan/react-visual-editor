@@ -1,67 +1,61 @@
-// All files stored inside the user's object:
-// users -> { [username]: { password, files: { [filename]: chars[] } } }
 
-import { getUsers } from "./useAuth";
+export function useFiles(currentUser, setCurrentUser) {
 
-const LS_USERS = "users";
+  function updateSession(newUserData) {
+    if (!currentUser) return;
 
-function saveUsers(users) {
-  localStorage.setItem(LS_USERS, JSON.stringify(users));
-}
+    const newSession = {
+      ...currentUser,
+      userData: newUserData
+    };
 
-export function useFiles(username) {
+    localStorage.setItem("current_session", JSON.stringify(newSession));
+    setCurrentUser(newSession);
+  }
 
-  // Get the current user's files
   function getUserFiles() {
-    const users = getUsers();
-    return users[username]?.files || {};
+    return currentUser?.userData?.files || {};
   }
 
-  // List all file names for this user
   function listFiles() {
-    return Object.keys(getUserFiles()).sort();//למה למיין??
+    return Object.keys(getUserFiles()).sort();
   }
 
-  // Save a file under this user
   function saveFile(filename, chars) {
-    if (!filename || !username) return;
-    const users = getUsers();
-    if (!users[username]) return;
-    users[username].files[filename] = chars;
-    saveUsers(users);
+    if (!filename || !currentUser) return;
+
+    const newUserData = { ...currentUser.userData };
+    newUserData.files[filename] = chars;
+
+    updateSession(newUserData);
   }
 
-  // Load a file by name
   function openFile(filename) {
     const files = getUserFiles();
     return files[filename] || null;
   }
 
-  // Delete a file by name
   function deleteFile(filename) {
-    if (!username) 
-      return;
-    const users = getUsers();
-    if (!users[username]?.files) 
-      return;
-    delete users[username].files[filename];
-    saveUsers(users);
+    if (!filename || !currentUser) return;
+
+    const newUserData = { ...currentUser.userData };
+    delete newUserData.files[filename];
+
+    updateSession(newUserData);
   }
 
-  // Rename a file
   function renameFile(oldName, newName) {
-    if (!oldName || !newName || oldName === newName || !username) return false;
-    const users = getUsers();
+    if (!oldName || !newName || oldName === newName || !currentUser) return;
 
-    if (!users[username]?.files) 
-      return false;
-    if (users[username].files[newName] !== undefined) 
-      return false; // name taken
+    const newUserData = { ...currentUser.userData };
+    const fileData = newUserData.files[oldName];
 
-    users[username].files[newName] = users[username].files[oldName];
-    delete users[username].files[oldName];
-    saveUsers(users);
-    return true;
+    if (!fileData) return;
+
+    delete newUserData.files[oldName];
+    newUserData.files[newName] = fileData;
+
+    updateSession(newUserData);
   }
 
   return { listFiles, saveFile, openFile, deleteFile, renameFile };

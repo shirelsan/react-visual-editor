@@ -19,11 +19,8 @@ const MAX_UNDO = 50;
 // ── App ─────────────────────────────────────────
 export default function App() {
 
-  // חלק ד – אימות
-  const { currentUser, login, register, logout: authLogout } = useAuth();
-
-  // חלק ב+ד – קבצים
-  const { listFiles, saveFile, openFile, deleteFile } = useFiles(currentUser || "");
+  const { currentUser, setCurrentUser, login, register, logout: authLogout } = useAuth();
+  const { listFiles, saveFile, openFile, deleteFile, renameFile } = useFiles(currentUser, setCurrentUser);
 
   // חלק ג – מסמכים פתוחים
   const [docs,      setDocs]      = useState(() => [newDoc()]);
@@ -201,6 +198,17 @@ export default function App() {
     delete historyRef.current[id];
   }
 
+
+  function handleRenameFile (oldName, newName) {
+    renameFile(oldName, newName);
+
+    setDocs(prevDocs => 
+      prevDocs.map(doc => 
+        doc.name === oldName ? { ...doc, name: newName } : doc
+      )
+    );
+  };
+
   // ── לפני login ──
   if (!currentUser) {
     return <AuthScreen onLogin={login} onRegister={register} />;
@@ -215,7 +223,7 @@ export default function App() {
         <div style={styles.topActions}>
           <button style={styles.topBtn} onClick={handleNew}>+ טקסט חדש</button>
           <button style={styles.topBtn} onClick={() => setShowFiles(true)}>📁 קבצים</button>
-          <span style={styles.userLabel}>👤 {currentUser}</span>
+          <span style={styles.userLabel}>👤 {currentUser?.name}</span>
           <button style={{ ...styles.topBtn, ...styles.topBtnRed }} onClick={handleLogout}>יציאה</button>
         </div>
       </div>
@@ -263,6 +271,7 @@ export default function App() {
         <FileManager
           files={listFiles()}
           onSave={handleSave}
+          onRename={handleRenameFile}
           onOpen={handleOpen}
           onDelete={handleDeleteFile}
           onClose={() => setShowFiles(false)}

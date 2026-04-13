@@ -1,11 +1,11 @@
 // Data structure in localStorage:
-// "users" : { username: { password, files: { filename: chars[] } } }
-// "current_user" : username (active session)
+// "all_users" : { username: { password, files: { filename: chars[] } } }
+// "current_session" : { username, userDtata; {password, files: { filename: chars[] } }}
 
 import { useState } from "react";
 
-const LS_USERS   = "all_users";
-const LS_CURRENT = "current_user";
+export const LS_USERS   = "all_users";
+export const LS_SESSION = "current_session"
 
 export function getUsers() {
   try { return JSON.parse(localStorage.getItem(LS_USERS)) || {}; }
@@ -17,9 +17,10 @@ function saveUsers(users) {
 }
 
 export function useAuth() {
-  const [currentUser, setCurrentUser] = useState(
-    () => localStorage.getItem(LS_CURRENT) || null
-  );
+  const [currentUser, setCurrentUser] = useState(() => {
+    const session = localStorage.getItem(LS_SESSION);
+    return session ? JSON.parse(session) : null;
+  });
 
   function register(username, password) {
     if (!username || !password) 
@@ -31,25 +32,43 @@ export function useAuth() {
     
     users[username] = { password, files: {} };
     saveUsers(users);
-    localStorage.setItem(LS_CURRENT, username);
-    setCurrentUser(username);
+    
+    const sessionData = { username, userData: newUser };
+    localStorage.setItem(LS_SESSION, JSON.stringify(sessionData));
+    setCurrentUser(sessionData);
     return null;
   }
 
   function login(username, password) {
-    if (!username || !password) return "Please fill in your username and password";
+    if (!username || !password) 
+      return "Please fill in your username and password";
+    
     const users = getUsers();
+    const user = users[username];
+
     if (!users[username] || users[username].password !== password)
       return "Incorrect username or password";
-    localStorage.setItem(LS_CURRENT, username);
-    setCurrentUser(username);
+
+    const sessionData = {
+      username: username,
+      userData: user
+    };
+    localStorage.setItem(LS_SESSION, JSON.stringify(sessionData));    
+    setCurrentUser(sessionData);
     return null;
   }
 
   function logout() {
-    localStorage.removeItem(LS_CURRENT);
+    if (!currentUser) 
+      return;
+
+    const users = getUsers();
+    users[currentUser.username] = currentUser.userData;
+    localStorage.setItem(LS_USERS, JSON.stringify(users));
+    
+    localStorage.removeItem(LS_SESSION);
     setCurrentUser(null);
   }
 
-  return { currentUser, login, register, logout };
+  return { currentUser, setCurrentUser, login, register, logout };
 }

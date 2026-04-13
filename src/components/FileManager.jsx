@@ -1,9 +1,23 @@
 // FileManager.jsx – שמירה ופתיחת קבצים (חלק ב)
 import React, { useState } from "react";
 
-export default function FileManager({ files, onSave, onOpen, onDelete, onClose }) {
+export default function FileManager({ files, onSave, onRename, onOpen, onDelete, onClose }) {
   const [newName, setNewName] = useState("");
   const [msg, setMsg]         = useState("");
+  const [renamingFiles, setRenamingFiles] = useState({}); 
+
+  function handleRename(oldName) {
+    const nextName = renamingFiles[oldName]?.trim();
+    if (!nextName || nextName === oldName) return;
+    
+    onRename(oldName, nextName);
+    // ניקוי השדה לאחר השינוי
+    setRenamingFiles(prev => {
+      const updated = { ...prev };
+      delete updated[oldName];
+      return updated;
+    });
+  }
 
   function handleSave() {
     if (!newName.trim()) { setMsg("נא להזין שם קובץ"); return; }
@@ -31,16 +45,26 @@ export default function FileManager({ files, onSave, onOpen, onDelete, onClose }
         {/* קבצים קיימים */}
         <div style={styles.section}>
           <div style={styles.sectionTitle}>קבצים שמורים:</div>
-          {files.length === 0
-            ? <div style={styles.empty}>אין קבצים שמורים עדיין</div>
-            : files.map(name => (
-              <div key={name} style={styles.fileRow}>
-                <span style={styles.fileName}>{name}</span>
-                <button style={styles.btnOpen}   onClick={() => { onOpen(name); onClose(); }}>פתח</button>
-                <button style={styles.btnDelete} onClick={() => onDelete(name)}>🗑</button>
-              </div>
-            ))
-          }
+          {files.map(name => ( // המשתנה כאן הוא name
+          <div key={name} style={styles.fileRow}>
+            <span style={styles.fileName}>{name}</span>
+                  
+            <button style={styles.btnOpen} onClick={() => { onOpen(name); onClose(); }}>פתח</button>
+                  
+            <input 
+              style={styles.renameInput}
+              placeholder="שם חדש..."
+              // כאן היה f, צריך להיות name:
+              value={renamingFiles[name] || ""} 
+              onChange={(e) => setRenamingFiles({ ...renamingFiles, [name]: e.target.value })}
+            />
+            
+            {/* גם כאן להחליף ל-name: */}
+            <button style={styles.btnRename} onClick={() => handleRename(name)}>שנה שם</button>
+                  
+            <button style={styles.btnDelete} onClick={() => onDelete(name)}>🗑</button>
+          </div>
+        ))}
         </div>
 
         <button style={styles.btnClose} onClick={onClose}>סגור</button>
@@ -79,4 +103,21 @@ const styles = {
   btnOpen:   { padding: "4px 10px", background: "#3498db", color: "#fff", border: "none", borderRadius: 5, cursor: "pointer", fontSize: 13 },
   btnDelete: { padding: "4px 8px",  background: "#e74c3c", color: "#fff", border: "none", borderRadius: 5, cursor: "pointer", fontSize: 13 },
   btnClose:  { alignSelf: "flex-end", padding: "6px 18px", background: "#95a5a6", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" },
+
+  renameInput: {
+    width: 80,
+    fontSize: 12,
+    padding: "2px 5px",
+    border: "1px solid #ccc",
+    borderRadius: 4
+  },
+  btnRename: {
+    padding: "4px 8px",
+    fontSize: 11,
+    background: "#f39c12", // צבע כתום לשינוי שם
+    color: "white",
+    border: "none",
+    borderRadius: 4,
+    cursor: "pointer"
+  },
 };
