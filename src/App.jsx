@@ -56,17 +56,7 @@ export default function App() {
 
   // ── logout – save dirty docs then reset ──
   function handleLogout() {
-    const dirtyDocs = docs.filter(d => d.dirty);
 
-    if (dirtyDocs.length > 0) {
-      const names = dirtyDocs.map(d => `"${d.name}"`).join(", ");
-      const shouldSave = window.confirm(
-        `המסמכים הבאים לא נשמרו: ${names}\nלשמור לפני יציאה?`
-      );
-      if (shouldSave) {
-        dirtyDocs.forEach(d => saveFile(d.name, d.chars));
-      }
-    }
 
     const fresh = newDoc();
     setDocs([fresh]);
@@ -147,13 +137,37 @@ export default function App() {
 
   // ── חלק ב: שמירה / פתיחה ──
 
+  // function handleSave(filename, docId) {
+  //   const targetId  = docId || focusedId;
+  //   const targetDoc = docs.find(d => d.id === targetId);
+  //   if (!targetDoc) return;
+  //   saveFile(filename, targetDoc.chars);
+  //   setDocs(prev => prev.map(d =>
+  //     d.id === targetId ? { ...d, name: filename, dirty: false } : d
+  //   ));
+  // }
+
   function handleSave(filename, docId) {
     const targetId  = docId || focusedId;
     const targetDoc = docs.find(d => d.id === targetId);
     if (!targetDoc) return;
+
+    // בדיקה שהשם אינו "new"
+    if (filename === "new") {
+        const newName = window.prompt('שם "new" שמור למערכת. הזן שם אחר:');
+        if (!newName || newName.trim() === "new") return;
+        filename = newName.trim();
+    }
+
+    // בדיקה אם קובץ כזה כבר קיים של משתמש אחר
+    const existingFiles = listFiles();
+    if (existingFiles.includes(filename) && filename !== targetDoc.name) {
+        if (!window.confirm(`הקובץ "${filename}" כבר קיים. להחליף אותו?`)) return;
+    }
+
     saveFile(filename, targetDoc.chars);
     setDocs(prev => prev.map(d =>
-      d.id === targetId ? { ...d, name: filename, dirty: false } : d
+        d.id === targetId ? { ...d, name: filename, dirty: false } : d
     ));
   }
 

@@ -77,7 +77,10 @@ const styles = {
   langRow: { display: "flex", gap: 4, flexWrap: "wrap", marginBottom: 2 },
   langBtn: {
     padding: "3px 10px", borderRadius: 6,
-    border: "1px solid #b2bec3", background: "#fff",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#b2bec3",
+    background: "#fff",
     cursor: "pointer", fontSize: 12, fontWeight: "bold", color: "#2c3e50",
     whiteSpace: "nowrap",
   },
