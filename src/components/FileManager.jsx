@@ -21,11 +21,16 @@ export default function FileManager({ files, onSave, onRename, onOpen, onDelete,
 
   function handleSave() {
     if (!newName.trim()) { setMsg("נא להזין שם קובץ"); return; }
+    if (newName.trim() === "new") { setMsg('שם "new" שמור למערכת, בחר שם אחר'); return; }
+    
+    if (files.includes(newName.trim())) {
+        if (!window.confirm(`הקובץ "${newName.trim()}" כבר קיים. להחליף אותו?`)) return;
+    }
+    
     onSave(newName.trim());
     setMsg(`נשמר: "${newName.trim()}"`);
     setNewName("");
-  }
-
+}
   return (
     <div style={styles.overlay}>
       <div style={styles.box}>

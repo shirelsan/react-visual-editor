@@ -62,7 +62,9 @@ const styles = {
   },
   btn: {
     minWidth: 28, height: 28,
-    border: "1px solid #e2e8f0",
+    borderWidth: 1,
+    borderStyle: "solid",
+    borderColor: "#e2e8f0",
     borderRadius: 6, background: "#f8fafc",
     cursor: "pointer", fontSize: 13,
     color: "#1e293b", fontFamily: "inherit",

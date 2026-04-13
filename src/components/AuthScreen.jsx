@@ -1,18 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export default function AuthScreen({ onLogin, onRegister }) {
   const [mode, setMode]         = useState("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
-
-  // Load Heebo font from Google Fonts
-  useEffect(() => {
-    const link = document.createElement("link");
-    link.href = "https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap";
-    link.rel  = "stylesheet";
-    document.head.appendChild(link);
-  }, []);
 
   function handleSubmit() {
     setError("");
