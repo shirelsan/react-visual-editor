@@ -1,5 +1,3 @@
-// StyleBar.jsx – בחירת גופן / גודל / צבע / עיצוב (חלק א)
-// תיקון 3: flexWrap לרספונסיביות
 import React from "react";
 import { FONTS, SIZES, COLORS } from "../data/styleOptions";
 
@@ -30,7 +28,7 @@ export default function StyleBar({ style, onChange, applyToAll, onApplyToAllChan
           <div key={c} onClick={() => onChange({ color: c })} style={{
             ...styles.colorDot,
             background: c,
-            border: style.color === c ? "2px solid #e74c3c" : "2px solid #bdc3c7",
+            border: style.color === c ? "2px solid #2563eb" : "2px solid #e2e8f0",
           }} />
         ))}
       </div>
@@ -48,25 +46,35 @@ export default function StyleBar({ style, onChange, applyToAll, onApplyToAllChan
 
 const styles = {
   container: {
-    display: "flex", flexWrap: "wrap", alignItems: "center", gap: 5,
-    padding: "6px 10px", background: "#ecf0f1",
-    borderRadius: 8, border: "1px solid #bdc3c7",
+    display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6,
+    padding: "7px 12px",
+    background: "#ffffff",
+    borderRadius: 9,
+    border: "1px solid #e2e8f0",
+    boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
   },
   select: {
-    border: "1px solid #bdc3c7", borderRadius: 5,
-    padding: "3px 4px", fontSize: 12, background: "#fff", cursor: "pointer",
-    maxWidth: 130,
+    border: "1px solid #e2e8f0", borderRadius: 6,
+    padding: "4px 6px", fontSize: 12,
+    background: "#f8fafc", cursor: "pointer",
+    maxWidth: 130, fontFamily: "inherit",
+    color: "#1e293b",
   },
   btn: {
-    minWidth: 28, height: 28, border: "1px solid #bdc3c7",
-    borderRadius: 5, background: "#fff", cursor: "pointer", fontSize: 13,
+    minWidth: 28, height: 28,
+    border: "1px solid #e2e8f0",
+    borderRadius: 6, background: "#f8fafc",
+    cursor: "pointer", fontSize: 13,
+    color: "#1e293b", fontFamily: "inherit",
   },
-  btnActive: { background: "#2c3e50", color: "#fff", borderColor: "#2c3e50" },
-  sep: { width: 1, height: 22, background: "#bdc3c7", margin: "0 2px" },
-  colorsWrap: { display: "flex", gap: 3, alignItems: "center", flexWrap: "wrap" },
+  btnActive: { background: "#2563eb", color: "#fff", borderColor: "#2563eb" },
+  sep: { width: 1, height: 22, background: "#e2e8f0", margin: "0 2px" },
+  colorsWrap: { display: "flex", gap: 4, alignItems: "center", flexWrap: "wrap" },
   colorDot: { width: 18, height: 18, borderRadius: "50%", cursor: "pointer", flexShrink: 0 },
   checkLabel: {
-    display: "flex", alignItems: "center", gap: 4,
-    fontSize: 12, cursor: "pointer", userSelect: "none", whiteSpace: "nowrap",
+    display: "flex", alignItems: "center", gap: 5,
+    fontSize: 12, cursor: "pointer", userSelect: "none",
+    whiteSpace: "nowrap", color: "#475569",
+    fontFamily: "inherit",
   },
 };

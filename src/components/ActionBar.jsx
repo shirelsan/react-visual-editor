@@ -1,14 +1,13 @@
-// ActionBar.jsx – כפתורי פעולה: מחיקה / Undo / חיפוש (חלק א)
 import React from "react";
 
 export default function ActionBar({ onDeleteChar, onDeleteWord, onDeleteAll, onUndo, onSearch }) {
   return (
     <div style={styles.container}>
-      <button style={styles.btn}                        onClick={onDeleteChar}>⌫ מחק תו</button>
-      <button style={styles.btn}                        onClick={onDeleteWord}>⌦ מחק מילה</button>
+      <button style={styles.btn}                          onClick={onDeleteChar}>⌫ מחק תו</button>
+      <button style={styles.btn}                          onClick={onDeleteWord}>⌦ מחק מילה</button>
       <button style={{ ...styles.btn, ...styles.danger }} onClick={onDeleteAll} >🗑 מחק הכל</button>
       <div style={styles.sep} />
-      <button style={styles.btn}                        onClick={onUndo}      >↩ Undo</button>
+      <button style={styles.btn}                          onClick={onUndo}      >↩ Undo</button>
       <button style={{ ...styles.btn, ...styles.search }} onClick={onSearch}    >🔍 חיפוש / החלפה</button>
     </div>
   );
@@ -18,10 +17,13 @@ const styles = {
   container: { display: "flex", flexWrap: "wrap", gap: 6, alignItems: "center" },
   btn: {
     padding: "5px 14px", borderRadius: 7,
-    border: "1px solid #bdc3c7", background: "#ecf0f1",
-    color: "#2c3e50", cursor: "pointer", fontSize: 13,
+    border: "1px solid #e2e8f0",
+    background: "#f8fafc", color: "#1e293b",
+    cursor: "pointer", fontSize: 13,
+    fontFamily: "inherit",
+    transition: "background 0.15s",
   },
-  danger: { background: "#fadbd8", borderColor: "#e74c3c", color: "#c0392b" },
-  search: { background: "#d6eaf8", borderColor: "#3498db", color: "#1a5276" },
-  sep:    { width: 1, height: 22, background: "#bdc3c7", margin: "0 2px" },
+  danger: { background: "#fee2e2", borderColor: "#fca5a5", color: "#dc2626" },
+  search: { background: "#eff6ff", borderColor: "#bfdbfe", color: "#2563eb" },
+  sep:    { width: 1, height: 22, background: "#e2e8f0", margin: "0 2px" },
 };

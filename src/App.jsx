@@ -64,7 +64,7 @@ export default function App() {
     if (dirtyDocs.length > 0) {
       const names = dirtyDocs.map(d => `"${d.name}"`).join(", ");
       const shouldSave = window.confirm(
-        `The following documents were not saved: ${names}\n Save before exit?`
+        `המסמכים הבאים לא נשמרו: ${names}\nלשמור לפני יציאה?`
       );
       if (shouldSave) {
         dirtyDocs.forEach(d => saveFile(d.name, d.chars));
@@ -285,36 +285,47 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     height: "100vh",
-    fontFamily: "Arial, sans-serif",
-    background: "#f0f3f4",
+    fontFamily: "'Heebo', Arial, sans-serif",
+    background: "#f7f8fa",
     direction: "rtl",
     overflow: "hidden",
   },
   topBar: {
-    background: "#2c3e50",
-    color: "#ecf0f1",
-    padding: "8px 16px",
+    background: "#ffffff",
+    color: "#1e293b",
+    padding: "10px 20px",
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
     flexShrink: 0,
     flexWrap: "wrap",
     gap: 8,
+    borderBottom: "1px solid #e2e8f0",
+    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
   },
-  appTitle: { fontSize: 17, fontWeight: "bold" },
+  appTitle: { fontSize: 17, fontWeight: "700", color: "#2563eb", letterSpacing: 0.3 },
   topActions: { display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" },
   topBtn: {
-    padding: "5px 12px", borderRadius: 6, border: "none",
-    background: "#34495e", color: "#ecf0f1",
+    padding: "5px 14px", borderRadius: 7,
+    border: "1px solid #e2e8f0",
+    background: "#f1f5f9", color: "#1e293b",
     cursor: "pointer", fontSize: 13, whiteSpace: "nowrap",
+    fontFamily: "inherit",
+    transition: "background 0.15s",
   },
-  topBtnRed: { background: "#c0392b" },
+  topBtnRed: {
+    background: "#fee2e2", color: "#dc2626",
+    borderColor: "#fca5a5",
+  },
   userLabel: {
-    background: "#1a252f", padding: "4px 10px",
-    borderRadius: 6, fontSize: 13, whiteSpace: "nowrap",
+    background: "#eff6ff", color: "#2563eb",
+    border: "1px solid #bfdbfe",
+    padding: "4px 12px",
+    borderRadius: 7, fontSize: 13, whiteSpace: "nowrap",
+    fontWeight: "600",
   },
 
-  // אזור עליון – גמיש, תופס את כל המקום הפנוי
+  // upper area – flex, takes all available space
   displayArea: {
     flex: 1,
     display: "flex",
@@ -323,25 +334,25 @@ const styles = {
     minHeight: 0,
   },
 
-  // רצועת טאבים
+  // tabs row
   tabsRow: {
     display: "flex",
     flexDirection: "row",
     flexWrap: "nowrap",
     overflowX: "auto",
-    gap: 2,
-    padding: "8px 12px 0 12px",
-    background: "#dce6ec",
-    borderBottom: "2px solid #2eadd0",
+    gap: 4,
+    padding: "10px 16px 0 16px",
+    background: "#f1f5f9",
+    borderBottom: "2px solid #e2e8f0",
     flexShrink: 0,
     alignItems: "flex-end",
   },
 
-  // עטיפת תצוגת הטקסט
+  // text display wrapper
   textDisplayWrapper: {
     flex: 1,
     overflow: "hidden",
-    padding: 12,
+    padding: "12px 16px",
     minHeight: 0,
   },
 };

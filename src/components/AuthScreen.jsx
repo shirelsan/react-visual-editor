@@ -1,11 +1,18 @@
-// AuthScreen.jsx – מסך כניסה והרשמה (חלק ד)
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function AuthScreen({ onLogin, onRegister }) {
-  const [mode, setMode]         = useState("login"); // "login" | "register"
+  const [mode, setMode]         = useState("login");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError]       = useState("");
+
+  // Load Heebo font from Google Fonts
+  useEffect(() => {
+    const link = document.createElement("link");
+    link.href = "https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&display=swap";
+    link.rel  = "stylesheet";
+    document.head.appendChild(link);
+  }, []);
 
   function handleSubmit() {
     setError("");
@@ -18,9 +25,12 @@ export default function AuthScreen({ onLogin, onRegister }) {
   return (
     <div style={styles.overlay}>
       <div style={styles.box}>
-        <div style={styles.title}>✏️ עורך טקסטים ויזואלי</div>
 
-        {/* טאבים */}
+        <div style={styles.logo}>✏️</div>
+        <div style={styles.title}>עורך טקסטים ויזואלי</div>
+        <div style={styles.subtitle}>ברוך הבא</div>
+
+        {/* tabs */}
         <div style={styles.tabs}>
           <button
             style={{ ...styles.tab, ...(mode === "login" ? styles.tabActive : {}) }}
@@ -60,43 +70,65 @@ export default function AuthScreen({ onLogin, onRegister }) {
 const styles = {
   overlay: {
     position: "fixed", inset: 0,
-    background: "#f0f3f4",
+    background: "#f7f8fa",
     display: "flex", alignItems: "center", justifyContent: "center",
+    fontFamily: "'Heebo', Arial, sans-serif",
+    direction: "rtl",
   },
   box: {
-    background: "#fff",
-    border: "1px solid #bdc3c7",
-    borderRadius: 12,
-    padding: 36,
-    width: 320,
+    background: "#ffffff",
+    border: "1px solid #e2e8f0",
+    borderRadius: 14,
+    padding: "36px 40px",
+    width: 340,
     display: "flex", flexDirection: "column", gap: 12,
-    direction: "rtl",
-    boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+    boxShadow: "0 4px 24px rgba(0,0,0,0.07)",
+  },
+  logo: {
+    fontSize: 36, textAlign: "center", marginBottom: 2,
   },
   title: {
-    fontSize: 20, fontWeight: "bold",
-    color: "#2c3e50", textAlign: "center", marginBottom: 4,
+    fontSize: 20, fontWeight: "700",
+    color: "#1e293b", textAlign: "center",
   },
-  tabs: { display: "flex", gap: 8 },
+  subtitle: {
+    fontSize: 13, color: "#94a3b8",
+    textAlign: "center", marginTop: -6, marginBottom: 4,
+  },
+  tabs: {
+    display: "flex", gap: 6,
+    background: "#f1f5f9", borderRadius: 8, padding: 4,
+  },
   tab: {
     flex: 1, padding: "7px",
-    background: "#ecf0f1", color: "#7f8c8d",
-    border: "1px solid #bdc3c7", borderRadius: 6,
+    background: "transparent", color: "#64748b",
+    border: "none", borderRadius: 6,
     cursor: "pointer", fontSize: 14,
+    fontFamily: "inherit", fontWeight: "500",
+    transition: "background 0.15s",
   },
   tabActive: {
-    background: "#2c3e50", color: "#fff", borderColor: "#2c3e50",
+    background: "#ffffff", color: "#2563eb",
+    fontWeight: "700",
+    boxShadow: "0 1px 4px rgba(0,0,0,0.08)",
   },
   input: {
-    border: "1px solid #bdc3c7", borderRadius: 6,
-    padding: "8px 12px", fontSize: 14, color: "#2c3e50",
+    border: "1px solid #e2e8f0", borderRadius: 8,
+    padding: "9px 14px", fontSize: 14,
+    color: "#1e293b", fontFamily: "inherit",
+    outline: "none",
+    background: "#f8fafc",
   },
   error: {
-    color: "#e74c3c", fontSize: 13, textAlign: "center",
+    color: "#dc2626", fontSize: 13,
+    textAlign: "center", background: "#fee2e2",
+    borderRadius: 6, padding: "6px 12px",
   },
   btn: {
-    padding: 10, background: "#2c3e50", color: "#fff",
-    border: "none", borderRadius: 8,
-    cursor: "pointer", fontSize: 15, fontWeight: "bold",
+    padding: 11, background: "#2563eb", color: "#fff",
+    border: "none", borderRadius: 9,
+    cursor: "pointer", fontSize: 15, fontWeight: "700",
+    fontFamily: "inherit",
+    transition: "background 0.15s",
   },
 };

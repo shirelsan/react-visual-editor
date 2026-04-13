@@ -1,4 +1,3 @@
-// DocPanel.jsx – טאב של מסמך (חלק ג)
 import React from "react";
 
 export default function DocPanel({ doc, isFocused, onFocus, onClose, onSave }) {
@@ -32,9 +31,9 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: 6,
-    padding: "6px 10px",
-    background: "#dce1e7",
-    border: "1px solid #bdc3c7",
+    padding: "6px 12px",
+    background: "#e2e8f0",
+    border: "1px solid #e2e8f0",
     borderBottom: "none",
     borderRadius: "8px 8px 0 0",
     cursor: "pointer",
@@ -42,18 +41,20 @@ const styles = {
     minWidth: 100,
     transition: "background 0.15s",
     flexShrink: 0,
+    fontFamily: "'Heebo', Arial, sans-serif",
   },
   tabFocused: {
-    background: "#fff",
-    borderColor: "#2eadd0",
-    borderBottomColor: "#fff",
+    background: "#ffffff",
+    borderColor: "#e2e8f0",
+    borderBottomColor: "#ffffff",
+    boxShadow: "0 -2px 6px rgba(37,99,235,0.08)",
     zIndex: 1,
     position: "relative",
   },
   docName: {
     fontSize: 13,
-    fontWeight: "bold",
-    color: "#2c3e50",
+    fontWeight: "600",
+    color: "#1e293b",
     overflow: "hidden",
     textOverflow: "ellipsis",
     whiteSpace: "nowrap",
@@ -63,13 +64,13 @@ const styles = {
   saveBtn: {
     background: "none", border: "none",
     cursor: "pointer", fontSize: 12,
-    color: "#27ae60", padding: "1px 3px",
+    color: "#16a34a", padding: "1px 3px",
     lineHeight: 1,
   },
   closeBtn: {
     background: "none", border: "none",
     cursor: "pointer", fontSize: 11,
-    color: "#95a5a6", padding: "1px 3px",
+    color: "#94a3b8", padding: "1px 3px",
     lineHeight: 1,
   },
 };
