@@ -178,6 +178,12 @@ export default function App() {
   }
 
   function handleOpen(filename) {
+    const existing = docs.find(d => d.name === filename);
+    if (existing) {
+      setFocusedId(existing.id);
+      return;
+    }
+
     const chars = openFile(filename);
     if (!chars) return;
     setDocs(prev => prev.map(d =>
