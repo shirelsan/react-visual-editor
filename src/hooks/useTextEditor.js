@@ -1,5 +1,5 @@
 // useTextEditor.js – לוגיקת עריכה לטקסט אחד
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { DEFAULT_STYLE } from "../data/styleOptions";
 
 const MAX_UNDO = 50;
@@ -12,7 +12,7 @@ export function useTextEditor() {
   const [chars, setChars]               = useState([]);
   const [currentStyle, setCurrentStyle] = useState({ ...DEFAULT_STYLE });
   const [applyToAll, setApplyToAll]     = useState(false);
-  const historyRef                       = useRef([]);
+  const [history, setHistory]            = useState([]);
 
   function pushHistory(snapshot) {
     historyRef.current.push(snapshot.map(c => ({ ...c, style: { ...c.style } })));

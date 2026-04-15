@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import AuthScreen    from "./components/AuthScreen";
 import DocPanel      from "./components/DocPanel";
 import EditorArea    from "./components/EditorArea";
@@ -33,7 +33,7 @@ export default function App() {
   const [applyToAll,   setApplyToAll]   = useState(false);
 
   // Undo per doc
-  const historyRef = useRef({});
+  const [history, setHistory] = useState({});
 
   // מודאלים
   const [showFiles,  setShowFiles]  = useState(false);
@@ -50,10 +50,12 @@ export default function App() {
   }
 
   function pushHistory(docId, chars) {
-    if (!historyRef.current[docId]) historyRef.current[docId] = [];
-    const stack = historyRef.current[docId];
-    stack.push(chars.map(c => ({ ...c, style: { ...c.style } })));
-    if (stack.length > MAX_UNDO) stack.shift();
+    setHistory(prev => {
+        const stack = prev[docId] ? [...prev[docId]] : [];
+        stack.push(chars.map(c => ({ ...c, style: { ...c.style } })));
+        if (stack.length > MAX_UNDO) stack.shift();
+        return { ...prev, [docId]: stack };
+    });
   }
 
   // ── logout – save dirty docs then reset ──
@@ -65,7 +67,8 @@ export default function App() {
     setFocusedId(fresh.id);
     setCurrentStyle({ ...DEFAULT_STYLE });
     setApplyToAll(false);
-    historyRef.current = {};
+    //historyRef.current = {};
+    setHistory({});
     setShowFiles(false);
     setShowSearch(false);
     authLogout();
@@ -108,9 +111,10 @@ export default function App() {
   }
 
   function handleUndo() {
-    const stack = historyRef.current[focusedDoc.id];
+    const stack = history[focusedDoc.id];
     if (!stack || !stack.length) return;
-    const prev = stack.pop();
+    const prev = stack[stack.length - 1];
+    setHistory(h => ({ ...h, [focusedDoc.id]: stack.slice(0, -1) }));
     setDocs(d => d.map(doc => doc.id === focusedId ? { ...doc, chars: prev, dirty: true } : doc));
   }
 
@@ -211,7 +215,8 @@ export default function App() {
       if (focusedId === id) setFocusedId(next[0].id);
       return next;
     });
-    delete historyRef.current[id];
+    //delete historyRef.current[id];
+    setHistory(prev => { const next = {...prev}; delete next[id]; return next; });
   }
 
 
